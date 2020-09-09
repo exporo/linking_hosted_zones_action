@@ -24,11 +24,7 @@ def check_if_existing():
     global root_hosted_zone_name
 
     sub_record = get_record_set(sub_route53, record_name)
-    print(sub_record)
-    print()
     root_record = get_record_set(root_route53, root_hosted_zone_name)
-    print(root_record)
-    print()
     if root_record != None:
         if root_record == sub_record:
             print('The Root Account is already set up to forward to the Sub Account with {} dns requests'.format(record_name))
