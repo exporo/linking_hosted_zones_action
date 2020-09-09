@@ -1,0 +1,19 @@
+name: Copies Name Server to Root Account
+
+on: push
+
+jobs:
+  deploy:
+    name: Copies Name Server to Root
+    runs-on: docker.pkg.github.com/exporo/hosted_name_transfer/hosted_name_transfer:latest
+    env:
+        AWS_DEFAULT_REGION: eu-central-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SUB_ACCOUNT_ROOT_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SUB_ACCOUNT_ACCESS_KEY }}
+        AWS_ROOT_ACCESS_KEY_ID: ${{ secrets.AWS_ROOT_KEY_ID }}
+        AWS_ROOT_SECRET_ACCESS_KEY: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
+        RECORD_NAME: test.exporo.io
+        ROOT_HOSTED_ZONE_NAME: exporo.io
+    steps:
+      - name: Runs Python Script
+        run: python transfer-name-server.py
