@@ -10,8 +10,7 @@ jobs:
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.EXPORO_PACKAGES_ACCESS_PTAYLOR }}
-          registry: docker.pkg.github.com
-          repository: exporo/hosted_name_transfer/hosted_name_transfer
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ptaylorexporo/link_hosted_zones
           tag_with_ref: true
