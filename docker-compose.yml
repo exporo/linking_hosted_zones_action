@@ -1,7 +1,7 @@
 version: '3'
 services:
   transfer:
-    build: .
+    image: ptaylorexporo/link_hosted_zones:latest
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - AWS_ACCESS_KEY_ID= {{ AWS_SUB_ACCOUNT_ROOT_KEY_ID }}

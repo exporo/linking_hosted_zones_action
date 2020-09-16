@@ -1,7 +1,16 @@
 # Linking Hosted Zones
 
 ## Summary
-This container can be added to Github and CircleCI pipelines that will link together the primary domain that is hosted in another account (or root account) and the subdomain.
+This repo creates a docker image that can be used by CircleCI and DockerCompose, as well as a Github Action that can be used in Github Workflows. It allows the pipelines to link a sub-domain that is hosted on a sub-account with the primary domain that is hosted in root account(or another account).
+
+## When updating
+Make sure you run the following commands when updating the action:
+```
+git add --all
+git commit -m 'Updating action'
+git tag -a -m 'Updated action' v1
+git push --follow-tags -u origin master
+```
 
 ## Requirements
  - The Sub Account user needs to have permission to view DNS records in Route53 as well as get caller identity in STS. The minimum requirements are show below:
@@ -53,23 +62,58 @@ This container can be added to Github and CircleCI pipelines that will link toge
 
 ## Examples to add to pipeline
 ### Example use for Github Actions
-Just add the job link_hosted_zone to your code. You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the RECORD_NAME to be the subdomain that will be linked to sub-account and change the ROOT_HOSTED_ZONE_NAME to be the primary domain that RECORD_NAME needs to be linked to.
+Just add the job link_hosted_zone to your code (You can also add it as a step in your current job). You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the RECORD_NAME to be the subdomain that will be linked to sub-account and change the ROOT_HOSTED_ZONE_NAME to be the primary domain that RECORD_NAME needs to be linked to.
+#### As a job
 ```
 jobs:
+  hosted_zone:
+    name: Deploys Test Hosted Zone
+    runs-on: ubuntu-latest
+    env:
+        AWS_REGION: eu-central-1
+        ACCOUNT_ID: 770047734416
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SANDBOX_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SANDBOX_SECRET_KEY }}
+        ZONE_NAME: testhostedzone.exporo.io
   link_hosted_zone:
     name: Links Name Server to Root
-    runs-on: docker.pkg.github.com/exporo/hosted_name_transfer/hosted_name_transfer:latest
-    env:
-        AWS_DEFAULT_REGION: eu-central-1
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SUB_ACCOUNT_ROOT_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SUB_ACCOUNT_ACCESS_KEY }}
-        AWS_ROOT_ACCESS_KEY_ID: ${{ secrets.AWS_ROOT_KEY_ID }}
-        AWS_ROOT_SECRET_ACCESS_KEY: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
-        RECORD_NAME: test.test.io
-        ROOT_HOSTED_ZONE_NAME: test.io
+    needs: [hosted_zone]
+    runs-on: ubuntu-latest
     steps:
-      - name: Runs Python Script
-        run: python transfer-name-server.py
+      - name: Links Hosted Zone to Root Account
+        uses: exporo/linking_hosted_zones@v1
+        with:
+            region: eu-central-1
+            access: ${{ secrets.AWS_SUBACCOUNT_ACCESS_KEY }}
+            secret: ${{ secrets.AWS_SUBACCOUNT_SECRET_KEY }}
+            root_access: ${{ secrets.ROOT_ACCESS_KEY }}
+            root_secret: ${{ secrets.ROOT_SECRET_KEY }}
+            record: testhostedzone.test.io
+            root_record: test.io
+```
+#### As a step
+```
+jobs:
+  hosted_zone:
+    steps:
+      - name: Deploys Test Hosted Zone
+        runs-on: ubuntu-latest
+        env:
+            AWS_REGION: eu-central-1
+            ACCOUNT_ID: 111111111111
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SUBACCOUNT_ACCESS_KEY }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SUBACCOUNT_SECRET_KEY }}
+            ZONE_NAME: testhostedzone.exporo.io
+      - name: Links Hosted Zone to Root Account
+        uses: exporo/linking_hosted_zones@v2
+        with:
+        region: eu-central-1
+            access: ${{ secrets.AWS_SUBACCOUNT_ACCESS_KEY }}
+            secret: ${{ secrets.AWS_SUBACCOUNT_SECRET_KEY }}
+            root_access: ${{ secrets.ROOT_ACCESS_KEY }}
+            root_secret: ${{ secrets.ROOT_SECRET_KEY }}
+            record: testhostedzone.test.io
+            root_record: test.io
 ```
 
 ### Example use for Circle CI
