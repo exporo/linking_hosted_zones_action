@@ -1,0 +1,27 @@
+name: 'Hosted Zone Transfer'
+description: 'Pushes Hosted Zone Name Server to the Root Account'
+inputs:
+  region:
+    required: true
+    description: 'Default Region for AWS'
+  access:
+    required: true
+    description: 'Access Key for AWS Sub-Account User'
+  secret:
+    required: true
+    description: 'Secret Key for AWS Sub-Account User'
+  root_access:
+    required: true
+    description: 'Access Key for AWS Root-Account User'
+  root_secret:
+    required: true
+    description: 'Secret Key for AWS Root-Account User'
+  record:
+    required: true
+    description: 'Hosted Zone Name that will be pushed to Root-Account from the Sub-Account'
+  root_record:
+    required: true
+    description: 'The Hosted Zone Name in Root-Account'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

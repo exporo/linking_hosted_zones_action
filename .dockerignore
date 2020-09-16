@@ -2,3 +2,4 @@
 Pipfile
 example.yml
 .github/*
+action.yml
