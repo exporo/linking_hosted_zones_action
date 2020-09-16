@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #This if statement is for use of github actions.
 if [ -z "$AWS_DEFAULT_REGION" ]
 then
