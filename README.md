@@ -8,7 +8,6 @@ Make sure you run the following commands when updating the action:
 ```
 git add --all
 git commit -m 'Updating action'
-git tag -a -m 'Updated action' v1
 git push --follow-tags -u origin master
 ```
 
