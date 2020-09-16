@@ -76,7 +76,7 @@ then
 fi
 
 #Makes sure script is executable
-chmod u+x transfer-name-server.py
+chmod u+x /transfer-name-server.py
 
 #Runs python script
-python transfer-name-server.py
+python /transfer-name-server.py
