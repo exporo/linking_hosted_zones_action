@@ -8,5 +8,5 @@ services:
       - AWS_SECRET_ACCESS_KEY= {{ AWS_SUB_ACCOUNT_ACCESS_KEY }}
       - AWS_ROOT_ACCESS_KEY_ID= {{ AWS_ROOT_KEY_ID }}
       - AWS_ROOT_SECRET_ACCESS_KEY= {{ AWS_ROOT_SECRET_ACCESS_KEY }}
-      - RECORD_NAME=testingtransfer.exporo.io
-      - ROOT_HOSTED_ZONE_NAME=exporo.io
+      - RECORD_NAME=testing.test.io
+      - ROOT_HOSTED_ZONE_NAME=test.io
