@@ -61,19 +61,10 @@ git push --follow-tags -u origin master
 
 ## Examples to add to pipeline
 ### Example use for Github Actions
-Just add the job link_hosted_zone to your code (You can also add it as a step in your current job). You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the RECORD_NAME to be the subdomain that will be linked to sub-account and change the ROOT_HOSTED_ZONE_NAME to be the primary domain that RECORD_NAME needs to be linked to.
+Just add the job link_hosted_zone to your code (You can also add it as a step in your current job). You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the record to be the subdomain that will be linked to sub-account and change the root_record to be the primary domain that record needs to be linked to.
 #### As a job
 ```
 jobs:
-  hosted_zone:
-    name: Deploys Test Hosted Zone
-    runs-on: ubuntu-latest
-    env:
-        AWS_REGION: eu-central-1
-        ACCOUNT_ID: 770047734416
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SANDBOX_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SANDBOX_SECRET_KEY }}
-        ZONE_NAME: testhostedzone.exporo.io
   link_hosted_zone:
     name: Links Name Server to Root
     needs: [hosted_zone]
@@ -95,18 +86,10 @@ jobs:
 jobs:
   hosted_zone:
     steps:
-      - name: Deploys Test Hosted Zone
-        runs-on: ubuntu-latest
-        env:
-            AWS_REGION: eu-central-1
-            ACCOUNT_ID: 111111111111
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SUBACCOUNT_ACCESS_KEY }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SUBACCOUNT_SECRET_KEY }}
-            ZONE_NAME: testhostedzone.exporo.io
       - name: Links Hosted Zone to Root Account
         uses: exporo/linking_hosted_zones@v2
         with:
-        region: eu-central-1
+            region: eu-central-1
             access: ${{ secrets.AWS_SUBACCOUNT_ACCESS_KEY }}
             secret: ${{ secrets.AWS_SUBACCOUNT_SECRET_KEY }}
             root_access: ${{ secrets.ROOT_ACCESS_KEY }}
@@ -116,18 +99,18 @@ jobs:
 ```
 
 ### Example use for Circle CI
-Just add the job link_hosted_zone to your code. You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the RECORD_NAME to be the subdomain that will be linked to sub-account and change the ROOT_HOSTED_ZONE_NAME to be the primary domain that RECORD_NAME needs to be linked to.
+Just add the job link_hosted_zone to your code. You will need to use Secrets for the Access and Secret Keys for AWS. As well as change the record to be the subdomain that will be linked to sub-account and change the root_record to be the primary domain that record needs to be linked to.
 ```
 jobs:
-  link_hosted_zone:
-    docker:
-        image: docker.pkg.github.com/exporo/hosted_name_transfer/hosted_name_transfer:latest
-        environment:   
-            AWS_DEFAULT_REGION: eu-central-1
-            AWS_ACCESS_KEY_ID: $AWS_SUB_ACCOUNT_ROOT_KEY_ID
-            AWS_SECRET_ACCESS_KEY: $AWS_SUB_ACCOUNT_ACCESS_KEY
-            AWS_ROOT_ACCESS_KEY_ID: $AWS_ROOT_KEY_ID
-            AWS_ROOT_SECRET_ACCESS_KEY: $AWS_ROOT_SECRET_ACCESS_KEY
-            RECORD_NAME: test.test.io
-            ROOT_HOSTED_ZONE_NAME: test.io
+  steps:
+    - name: Link Hosted Zone to Root Account
+      uses: exporo/linking_hosted_zones_action@v1
+      with:
+        region: eu-central-1
+        access: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        root_access: ${{ secrets.ROOT_ROUTE53_LINK_ACCESS }}
+        root_secret: ${{ secrets.ROOT_ROUTE53_LINK_SECRET }}
+        record: test.test.io
+        root_record: test.io
 ```
