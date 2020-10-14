@@ -114,3 +114,6 @@ jobs:
         record: test.test.io
         root_record: test.io
 ```
+
+## TODO
+- Publish package
